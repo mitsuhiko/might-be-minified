@@ -1,0 +1,12 @@
+[package]
+name = "might-be-minified"
+version = "0.1.0"
+authors = ["Armin Ronacher <armin.ronacher@active-4.com>"]
+keywords = ["javascript"]
+description = "Qualified guesswork for telling minified javascript from regular javascript"
+license = "BSD-3-Clause"
+readme = "README.md"
+
+[dependencies]
+regex = "0.1"
+lazy_static = "0.1"
