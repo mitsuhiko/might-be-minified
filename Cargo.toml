@@ -1,11 +1,13 @@
 [package]
 name = "might-be-minified"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Armin Ronacher <armin.ronacher@active-4.com>"]
 keywords = ["javascript"]
 description = "Qualified guesswork for telling minified javascript from regular javascript"
 license = "BSD-3-Clause"
 readme = "README.md"
+homepage = "https://github.com/mitsuhiko/might-be-minified"
+documentation = "https://docs.rs/might-be-minified"
 
 [dependencies]
 regex = "0.1"
