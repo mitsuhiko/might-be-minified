@@ -61,10 +61,16 @@ lazy_static! {
             void|
             while|
             with)\b) |
-        (?P<ident>\b
+        (?P<ident>
             [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}$_]
             [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$_]*
-        \b)
+        )
+    "#).unwrap();
+}
+lazy_static! {
+    static ref IDENT_RE : Regex = Regex::new(&r#"(?mx)
+        [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}$_]
+        [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$_]*
     "#).unwrap();
 }
 
@@ -126,12 +132,9 @@ pub fn analyze_str(code: &str) -> Analysis {
     // shitty tokenization.  This is known to be broken but it's "good enough"
     // to do a basic detection on if this is javascript or not.  In particular
     // we count keywords and a name length histogram.
-    for c in BASIC_TOKEN_RE.captures_iter(code) {
-        let (ty, val) = c.iter_named().filter(|&(_, x)| x.is_some()).next().unwrap();
-        if ty == "ident" {
-            if let Some(val) = val {
-                ident_lengths.push(val.len());
-            }
+    for m in BASIC_TOKEN_RE.find_iter(code) {
+        if IDENT_RE.is_match(m.as_str()) {
+            ident_lengths.push(m.end() - m.start());
         }
     }
 

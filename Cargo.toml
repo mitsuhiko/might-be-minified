@@ -10,5 +10,5 @@ homepage = "https://github.com/mitsuhiko/might-be-minified"
 documentation = "https://docs.rs/might-be-minified"
 
 [dependencies]
-regex = "0.1"
+regex = "0.2"
 lazy_static = "0.1"
