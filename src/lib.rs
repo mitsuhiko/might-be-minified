@@ -74,8 +74,14 @@ lazy_static! {
     "#).unwrap();
 }
 
-fn partial_min<T: PartialOrd>(a: T, b: T) -> T {
-    if a < b { a } else { b }
+fn partial_clamp<T: PartialOrd>(l: T, u: T, v: T) -> T {
+    if v < l {
+        l
+    } else if v > u {
+        u
+    } else {
+        v
+    }
 }
 
 /// Provides an analysis of a source file
@@ -171,7 +177,11 @@ impl Analysis {
     /// This returns the median length for an identifier (name) in the JS
     /// source code.
     pub fn median_ident_length(&self) -> usize {
-        *self.ident_lengths.get(self.ident_lengths.len() / 2).unwrap_or(&0)
+        if self.line_lengths.is_empty() {
+            0
+        } else {
+            *self.ident_lengths.get(self.ident_lengths.len() / 2).unwrap_or(&0)
+        }
     }
 
     /// The longest code line length
@@ -179,7 +189,11 @@ impl Analysis {
     /// This returns the length of the longest line.  This includes comments
     /// and other things.
     pub fn longest_line(&self) -> usize {
-        *self.line_lengths.get(self.line_lengths.len() - 1).unwrap_or(&0)
+        if self.line_lengths.is_empty() {
+            0
+        } else {
+            *self.line_lengths.get(self.line_lengths.len() - 1).unwrap_or(&0)
+        }
     }
 
     /// The "shape" of the code file
@@ -201,10 +215,10 @@ impl Analysis {
     /// definitely minified.  Anything above 0.5 is considered likely to be
     /// minified.
     pub fn minified_probability(&self) -> f32 {
-        let p_space = (0.5 - partial_min(0.5, self.space_to_code_ratio())) * 2.0;
-        let p_name = (5 - (partial_min(6, self.median_ident_length()) - 1)) as f32 / 5.0;
-        let p_shape = (20.0 - partial_min(20.0, self.shape())) / 20.0;
-        let p_line = partial_min(1000, self.longest_line()) as f32 / 1000.0;
+        let p_space = (0.5 - partial_clamp(0.0, 0.5, self.space_to_code_ratio())) * 2.0;
+        let p_name = (5 - (partial_clamp(1, 6, self.median_ident_length()) - 1)) as f32 / 5.0;
+        let p_shape = (20.0 - partial_clamp(0.0, 20.0, self.shape())) / 20.0;
+        let p_line = partial_clamp(0, 1000, self.longest_line()) as f32 / 1000.0;
         (
             p_space * 0.1 +
             p_name * 0.4 +

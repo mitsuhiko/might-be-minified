@@ -1,6 +1,6 @@
 [package]
 name = "might-be-minified"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Armin Ronacher <armin.ronacher@active-4.com>"]
 keywords = ["javascript"]
 description = "Qualified guesswork for telling minified javascript from regular javascript"
