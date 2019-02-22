@@ -1,12 +1,11 @@
 extern crate might_be_minified;
 
-use std::fs;
-use std::env;
 use might_be_minified::analyze;
-
+use std::env;
+use std::fs;
 
 pub fn main() {
-    let args : Vec<_> = env::args().collect();
+    let args: Vec<_> = env::args().collect();
     println!("Analyzing {:?}", args[1]);
     let mut f = fs::File::open(&args[1]).unwrap();
     let a = analyze(&mut f);

@@ -8,6 +8,7 @@ license = "BSD-3-Clause"
 readme = "README.md"
 homepage = "https://github.com/mitsuhiko/might-be-minified"
 documentation = "https://docs.rs/might-be-minified"
+edition = "2018"
 
 [dependencies]
 regex = "1.1.0"

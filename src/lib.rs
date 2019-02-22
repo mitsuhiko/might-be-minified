@@ -1,17 +1,15 @@
 //! A crate that helps to decide if something is a minified JavaScript
 //! file.
 
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
-
-use std::io::Read;
 use std::cmp::PartialOrd;
+use std::io::Read;
 
+use lazy_static::lazy_static;
 use regex::Regex;
 
 lazy_static! {
-    static ref BASIC_TOKEN_RE : Regex = Regex::new(&r#"(?mx)
+    static ref BASIC_TOKEN_RE: Regex = Regex::new(
+        &r#"(?mx)
         (?P<comment>
             //.*?$ |
             /\*.*?\*/) |
@@ -65,13 +63,18 @@ lazy_static! {
             [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}$_]
             [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$_]*
         )
-    "#).unwrap();
+    "#
+    )
+    .unwrap();
 }
 lazy_static! {
-    static ref IDENT_RE : Regex = Regex::new(&r#"(?mx)
+    static ref IDENT_RE: Regex = Regex::new(
+        &r#"(?mx)
         [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}$_]
         [\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$_]*
-    "#).unwrap();
+    "#
+    )
+    .unwrap();
 }
 
 fn partial_clamp<T: PartialOrd>(l: T, u: T, v: T) -> T {
@@ -164,7 +167,6 @@ pub fn analyze<R: Read>(mut rdr: R) -> Analysis {
 }
 
 impl Analysis {
-
     /// Returns the whitespace to code ratio
     ///
     /// This is a useful metric to decide on if a file is likely minified code
@@ -181,7 +183,10 @@ impl Analysis {
         if self.line_lengths.is_empty() {
             0
         } else {
-            *self.ident_lengths.get(self.ident_lengths.len() / 2).unwrap_or(&0)
+            *self
+                .ident_lengths
+                .get(self.ident_lengths.len() / 2)
+                .unwrap_or(&0)
         }
     }
 
@@ -193,7 +198,10 @@ impl Analysis {
         if self.line_lengths.is_empty() {
             0
         } else {
-            *self.line_lengths.get(self.line_lengths.len() - 1).unwrap_or(&0)
+            *self
+                .line_lengths
+                .get(self.line_lengths.len() - 1)
+                .unwrap_or(&0)
         }
     }
 
@@ -220,12 +228,7 @@ impl Analysis {
         let p_name = (5 - (partial_clamp(1, 6, self.median_ident_length()) - 1)) as f32 / 5.0;
         let p_shape = (20.0 - partial_clamp(0.0, 20.0, self.shape())) / 20.0;
         let p_line = partial_clamp(0, 1000, self.longest_line()) as f32 / 1000.0;
-        (
-            p_space * 0.1 +
-            p_name * 0.4 +
-            p_shape * 0.2 +
-            p_line * 0.3
-        )
+        (p_space * 0.1 + p_name * 0.4 + p_shape * 0.2 + p_line * 0.3)
     }
 
     /// Indicates that the file is likely minified
