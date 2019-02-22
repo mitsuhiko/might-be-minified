@@ -97,6 +97,7 @@ pub struct Analysis {
 /// Example:
 ///
 /// ```rust
+/// # use might_be_minified::analyze_str;
 /// if analyze_str("...").is_likely_minified() {
 ///     println!("This is probably a minified file");
 /// }
