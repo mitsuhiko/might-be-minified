@@ -1,5 +1,3 @@
-extern crate might_be_minified;
-
 use might_be_minified::analyze;
 use std::env;
 use std::fs;
